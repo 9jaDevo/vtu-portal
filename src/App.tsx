@@ -8,6 +8,7 @@ import { RegisterPage } from './pages/auth/RegisterPage';
 import { VerifyEmailPage } from './pages/auth/VerifyEmailPage';
 import { DashboardPage } from './pages/dashboard/DashboardPage';
 import { TransactionsPage } from './pages/dashboard/TransactionsPage';
+import { APIDocsPage } from './pages/APIDocsPage';
 import { MakeTransactionPage } from './pages/dashboard/MakeTransactionPage';
 import { WalletPage } from './pages/dashboard/WalletPage';
 import { APIPage } from './pages/dashboard/APIPage';
@@ -25,6 +26,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/api-docs" element={<APIDocsPage />} />
             
             {/* Protected Dashboard Routes */}
             <Route path="/dashboard" element={

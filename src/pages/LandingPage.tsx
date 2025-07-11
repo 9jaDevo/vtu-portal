@@ -97,7 +97,7 @@ export function LandingPage() {
                 <ArrowRight className="inline w-5 h-5 ml-2" />
               </Link>
               <Link
-                to="/api-docs"
+                to="/api-docs" 
                 className="border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-blue-600 hover:text-white transition-all duration-200"
               >
                 View API Docs
@@ -255,7 +255,7 @@ export function LandingPage() {
               Create Free Account
             </Link>
             <Link
-              to="/api-docs"
+              to="/api-docs" 
               className="border-2 border-white text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-white hover:text-blue-600 transition-all duration-200"
             >
               View Documentation
