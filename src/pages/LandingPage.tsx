@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { businessInfo } from '../config/businessInfo';
 import { 
   Smartphone, 
   Wifi, 
@@ -273,7 +274,7 @@ export function LandingPage() {
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
                   <CreditCard className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-xl font-bold text-white">VTU Pro</span>
+                <span className="text-xl font-bold text-white">{businessInfo.name}</span>
               </div>
               <p className="text-gray-400 mb-4">
                 The most reliable VTU platform for all your payment needs.
@@ -281,6 +282,12 @@ export function LandingPage() {
               <div className="flex items-center space-x-2 text-gray-400">
                 <Globe className="w-4 h-4" />
                 <span>Available 24/7</span>
+              </div>
+              {/* NAP details */}
+              <div className="mt-4 text-gray-400 text-sm">
+                <p><strong>Address:</strong> {businessInfo.address.streetAddress}, {businessInfo.address.addressLocality}, {businessInfo.address.addressRegion}, {businessInfo.address.postalCode}</p>
+                <p><strong>Phone:</strong> <a href={`tel:${businessInfo.telephone}`} className="hover:text-blue-300">{businessInfo.telephone}</a></p>
+                <p><strong>Email:</strong> <a href={`mailto:${businessInfo.email}`} className="hover:text-blue-300">{businessInfo.email}</a></p>
               </div>
             </div>
             
@@ -316,7 +323,7 @@ export function LandingPage() {
           </div>
           
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 VTU Pro. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} {businessInfo.name}. All rights reserved.</p>
           </div>
         </div>
       </footer>

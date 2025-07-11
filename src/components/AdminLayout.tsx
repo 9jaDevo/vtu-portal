@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Breadcrumbs } from './Breadcrumbs';
 import { 
   LayoutDashboard,
   Users,
@@ -154,6 +155,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
         {/* Page Content */}
         <main className="p-4 lg:p-8">
+          {/* Add Breadcrumbs here */}
+          <div className="mb-6">
+            <Breadcrumbs />
+          </div>
           {children}
         </main>
       </div>
