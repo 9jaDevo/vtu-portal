@@ -34,22 +34,22 @@ interface CreateApiKeyResponse {
 
 export const apiKeyService = {
   async getApiKeys(): Promise<ApiKey[]> {
-    const response = await apiClient.get('/v1/keys');
+    const response = await apiClient.get('/keys');
     return response.data;
   },
 
   async generateApiKey(data: CreateApiKeyRequest): Promise<CreateApiKeyResponse> {
-    const response = await apiClient.post('/v1/keys', data);
+    const response = await apiClient.post('/keys', data);
     return response.data;
   },
 
   async revokeApiKey(id: string): Promise<{ message: string }> {
-    const response = await apiClient.delete(`/v1/keys/${id}`);
+    const response = await apiClient.delete(`/keys/${id}`);
     return response.data;
   },
 
   async updateApiKey(id: string, data: { name?: string; usage_limit?: number }): Promise<{ message: string }> {
-    const response = await apiClient.patch(`/v1/keys/${id}`, data);
+    const response = await apiClient.patch(`/keys/${id}`, data);
     return response.data;
   }
 };
