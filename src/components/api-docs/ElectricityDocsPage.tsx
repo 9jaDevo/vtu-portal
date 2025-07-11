@@ -283,7 +283,7 @@ Body:
                     <td className="px-4 py-2 font-medium">amount</td>
                     <td className="px-4 py-2">number</td>
                     <td className="px-4 py-2">Yes</td>
-                    <td className="px-4 py-2">Amount in NGN (must be >= minimum amount from verification)</td>
+                     <td className="px-4 py-2">{'Amount in NGN (must be >= minimum amount from verification)'}</td>
                   </tr>
                   <tr>
                     <td className="px-4 py-2 font-medium">recipient</td>
