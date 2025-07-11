@@ -9,8 +9,13 @@ import {
   Key, 
   CreditCard, 
   ShoppingCart, 
-  Clock, 
-  List, 
+  ArrowRight,
+  Smartphone,
+  Wifi,
+  Tv,
+  Zap,
+  GraduationCap,
+  Shield,
   FileText, 
   CheckSquare
 } from 'lucide-react';
@@ -501,6 +506,103 @@ Headers:
   Authorization: Bearer <YOUR_JWT_TOKEN>`}
               </code>
             </pre>
+          </div>
+        </section>
+
+        {/* Service-specific Documentation Links */}
+        <section className="space-y-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+              <ShoppingCart className="w-5 h-5 text-purple-600" />
+            </div>
+            <h2 className="text-2xl font-semibold text-gray-900">Service-Specific Documentation</h2>
+          </div>
+          
+          <p className="text-gray-700">
+            Each service has its own dedicated documentation page with detailed information about available providers, plans, verification requirements, and sample requests/responses.
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+            {[
+              { 
+                name: 'Airtime API', 
+                icon: Smartphone, 
+                color: 'bg-blue-100', 
+                textColor: 'text-blue-600',
+                borderColor: 'border-blue-200',
+                hoverColor: 'hover:border-blue-400',
+                description: 'Purchase airtime for all networks',
+                path: '/api-docs/airtime'
+              },
+              { 
+                name: 'Data API', 
+                icon: Wifi, 
+                color: 'bg-green-100', 
+                textColor: 'text-green-600',
+                borderColor: 'border-green-200',
+                hoverColor: 'hover:border-green-400',
+                description: 'Purchase data bundles for all networks',
+                path: '/api-docs/data'
+              },
+              { 
+                name: 'TV API', 
+                icon: Tv, 
+                color: 'bg-purple-100', 
+                textColor: 'text-purple-600',
+                borderColor: 'border-purple-200',
+                hoverColor: 'hover:border-purple-400',
+                description: 'Pay for TV subscriptions (DSTV, GOtv, etc.)',
+                path: '/api-docs/tv'
+              },
+              { 
+                name: 'Electricity API', 
+                icon: Zap, 
+                color: 'bg-yellow-100', 
+                textColor: 'text-yellow-600',
+                borderColor: 'border-yellow-200',
+                hoverColor: 'hover:border-yellow-400',
+                description: 'Pay electricity bills for all providers',
+                path: '/api-docs/electricity'
+              },
+              { 
+                name: 'Education API', 
+                icon: GraduationCap, 
+                color: 'bg-indigo-100', 
+                textColor: 'text-indigo-600',
+                borderColor: 'border-indigo-200',
+                hoverColor: 'hover:border-indigo-400',
+                description: 'Pay for WAEC, JAMB, NECO services',
+                path: '/api-docs/education'
+              },
+              { 
+                name: 'Insurance API', 
+                icon: Shield, 
+                color: 'bg-red-100', 
+                textColor: 'text-red-600',
+                borderColor: 'border-red-200',
+                hoverColor: 'hover:border-red-400',
+                description: 'Purchase vehicle insurance',
+                path: '/api-docs/insurance'
+              }
+            ].map((service, index) => (
+              <Link 
+                key={index} 
+                to={service.path}
+                className={`p-6 border ${service.borderColor} rounded-xl ${service.hoverColor} hover:shadow-md transition-all duration-200`}
+              >
+                <div className="flex items-center space-x-3 mb-3">
+                  <div className={`w-10 h-10 ${service.color} rounded-lg flex items-center justify-center`}>
+                    <service.icon className={`w-5 h-5 ${service.textColor}`} />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">{service.name}</h3>
+                </div>
+                <p className="text-gray-600 mb-4">{service.description}</p>
+                <div className={`flex items-center ${service.textColor} font-medium`}>
+                  View Documentation
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </div>
+              </Link>
+            ))}
           </div>
         </section>
 
