@@ -26,8 +26,16 @@ export function LoginPage() {
     setIsLoading(true);
     try {
       await login(data.email, data.password);
+      // Get the user object after login
+      const userObj = JSON.parse(localStorage.getItem('user') || '{}');
       toast.success('Login successful!');
-      navigate('/dashboard');
+      
+      // Redirect based on user role
+      if (userObj.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (error: any) {
       const errorMessage = error.response?.data?.error || 'Login failed';
       

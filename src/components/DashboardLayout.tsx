@@ -34,6 +34,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: 'Transactions', href: '/dashboard/transactions', icon: History },
     { name: 'Wallet', href: '/dashboard/wallet', icon: Wallet },
     { name: 'API Keys', href: '/dashboard/api', icon: Code },
+    // Admin link - only shown to admin users
+    ...(user?.role === 'admin' ? [{ name: 'Admin Panel', href: '/admin', icon: Shield }] : []),
   ];
 
   const handleLogout = () => {
