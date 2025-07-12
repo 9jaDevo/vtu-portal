@@ -50,9 +50,8 @@ A comprehensive VTU (Virtual Top-Up) platform built with React and Node.js, prov
 - **Joi** - Data validation
 
 ### Database
-- **MySQL** - Production database (recommended)
-- **SQLite** - Development database
-- **Database Migrations** - Automatic schema management
+- **Supabase** - PostgreSQL database with built-in authentication and APIs
+- **Database Migrations** - SQL migrations for schema management
 
 ### External Services
 - **VTPass API** - VTU service provider
@@ -64,7 +63,7 @@ A comprehensive VTU (Virtual Top-Up) platform built with React and Node.js, prov
 Before you begin, ensure you have the following installed:
 - **Node.js** (v18 or higher)
 - **npm** or **yarn**
-- **MySQL** (for production) or SQLite will be used automatically for development
+- **Supabase Account** - Create one at [supabase.com](https://supabase.com) if you don't have one
 
 ## 🚀 Installation & Setup
 
@@ -90,17 +89,11 @@ Configure the following environment variables:
 
 #### Database Configuration
 ```env
-# Database type: 'sqlite' for development, 'mysql' for production
-DB_CLIENT=sqlite
-
-# SQLite (Development)
-SQLITE_DB_PATH=./data/database.sqlite
-
-# MySQL (Production)
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=vtu_platform
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url_here
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
+VITE_SUPABASE_URL=your_supabase_project_url_here
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 ```
 
 #### Authentication
@@ -145,14 +138,14 @@ ADMIN_PASSWORD=Admin@123456
 ```
 
 ### 4. Database Setup
-The database will be automatically initialized when you start the server. To seed the database with sample data:
+The database schema is managed through Supabase migrations. To set up your database:
+
+1. Create a Supabase project at [supabase.com](https://supabase.com)
+2. Copy your project URL and API keys to your `.env` file
+3. Run the database migrations and seed script:
 
 ```bash
-# For development
 npm run seed
-
-# For production
-npm run seed:prod
 ```
 
 ### 5. Start the Application
@@ -256,18 +249,21 @@ node server/dist/index.js
 ### Project Structure
 ```
 ├── src/                    # React frontend
-│   ├── components/         # Reusable components
+│   ├── components/        # Reusable components
 │   ├── contexts/          # React contexts
 │   ├── pages/             # Page components
 │   ├── services/          # API services
 │   └── main.tsx           # App entry point
 ├── server/                # Node.js backend
-│   ├── database/          # Database setup and migrations
+│   ├── database/          # Database setup and seed scripts
 │   ├── middleware/        # Express middleware
 │   ├── routes/            # API routes
 │   ├── services/          # Business logic services
 │   ├── utils/             # Utility functions
 │   └── index.ts           # Server entry point
+├── supabase/              # Supabase configuration
+│   ├── migrations/        # SQL migration files
+│   └── functions/         # Supabase Edge Functions
 ├── public/                # Static assets
 └── package.json           # Dependencies and scripts
 ```
@@ -287,15 +283,17 @@ node server/dist/index.js
 
 ### Environment Setup
 1. Set `NODE_ENV=production`
-2. Configure production database (MySQL recommended)
+2. Configure Supabase connection variables
 3. Set up production VTPass and Paystack credentials
 4. Configure proper CORS settings
 5. Set up SSL/TLS certificates
 
 ### Database Migration
 ```bash
-# Production database setup
-NODE_ENV=production npm run seed:prod
+# Apply migrations to your Supabase project
+# This is typically handled through the Supabase dashboard or CLI
+# For initial setup, run:
+npm run seed
 ```
 
 ### Process Management
@@ -328,6 +326,7 @@ For support and questions:
 
 - [VTPass](https://vtpass.com) - VTU service provider
 - [Paystack](https://paystack.com) - Payment gateway
+- [Supabase](https://supabase.com) - Database and authentication
 - [React](https://reactjs.org) - Frontend framework
 - [Express.js](https://expressjs.com) - Backend framework
 - [Tailwind CSS](https://tailwindcss.com) - CSS framework
