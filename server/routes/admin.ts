@@ -167,7 +167,7 @@ router.patch('/users/:id/reset-password', async (req: AuthRequest, res, next) =>
 router.post('/users/:id/credit-wallet', async (req: AuthRequest, res, next) => {
   try {
     const userId = req.params.id;
-    const { amount } = req.body;
+    const amount = parseFloat(req.body.amount);
 
     if (!amount || amount <= 0) {
       return res.status(400).json({ error: 'Amount must be a positive number' });
@@ -181,7 +181,8 @@ router.post('/users/:id/credit-wallet', async (req: AuthRequest, res, next) => {
     }
 
     const currentBalance = parseFloat(wallet.balance.toString());
-    const newBalance = currentBalance + amount;
+    // Ensure both values are treated as numbers
+    const newBalance = Number(currentBalance) + Number(amount);
 
     // Update wallet balance
     await updateWallet(userId, newBalance);
