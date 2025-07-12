@@ -166,5 +166,15 @@ export const adminService = {
   async updateSetting(key: string, value: any) {
     const response = await apiClient.patch(`/admin/settings/${key}`, { value });
     return response.data;
+  },
+
+  async resetUserPassword(userId: string, newPassword: string): Promise<{ message: string }> {
+    const response = await apiClient.patch(`/admin/users/${userId}/reset-password`, { newPassword });
+    return response.data;
+  },
+
+  async creditUserWallet(userId: string, amount: number): Promise<{ message: string; amount: number; newBalance: number }> {
+    const response = await apiClient.post(`/admin/users/${userId}/credit-wallet`, { amount });
+    return response.data;
   }
 };

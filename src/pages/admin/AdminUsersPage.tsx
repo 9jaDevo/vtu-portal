@@ -15,9 +15,13 @@ import {
   CheckCircle,
   XCircle,
   Clock
+  Key,
+  CreditCard,
+  DollarSign
 } from 'lucide-react';
 import { adminService } from '../../services/adminService';
 import { toast } from 'react-hot-toast';
+import { useForm } from 'react-hook-form';
 
 interface User {
   id: string;
@@ -30,6 +34,15 @@ interface User {
   email_verified: boolean;
   created_at: string;
   wallet_balance: number;
+}
+
+interface ResetPasswordForm {
+  newPassword: string;
+  confirmPassword: string;
+}
+
+interface CreditWalletForm {
+  amount: number;
 }
 
 interface UsersResponse {
@@ -57,6 +70,26 @@ export function AdminUsersPage() {
     search: ''
   });
   const [isUpdating, setIsUpdating] = useState(false);
+
+  // Password reset state and form
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const {
+    register: registerPassword,
+    handleSubmit: handlePasswordSubmit,
+    reset: resetPasswordForm,
+    formState: { errors: passwordErrors }
+  } = useForm<ResetPasswordForm>();
+
+  // Wallet credit state and form
+  const [showCreditModal, setShowCreditModal] = useState(false);
+  const [isCreditingWallet, setIsCreditingWallet] = useState(false);
+  const {
+    register: registerCredit,
+    handleSubmit: handleCreditSubmit,
+    reset: resetCreditForm,
+    formState: { errors: creditErrors }
+  } = useForm<CreditWalletForm>();
 
   const limit = 20;
 
@@ -95,6 +128,57 @@ export function AdminUsersPage() {
       toast.error('Failed to update user status');
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const resetPassword = async (data: ResetPasswordForm) => {
+    if (!selectedUser) return;
+    
+    if (data.newPassword !== data.confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    try {
+      setIsResettingPassword(true);
+      await adminService.resetUserPassword(selectedUser.id, data.newPassword);
+      toast.success('Password reset successfully');
+      setShowPasswordModal(false);
+      resetPasswordForm();
+    } catch (error: any) {
+      console.error('Error resetting password:', error);
+      toast.error('Failed to reset password');
+    } finally {
+      setIsResettingPassword(false);
+    }
+  };
+
+  const creditWallet = async (data: CreditWalletForm) => {
+    if (!selectedUser) return;
+
+    try {
+      setIsCreditingWallet(true);
+      const response = await adminService.creditUserWallet(selectedUser.id, data.amount);
+      toast.success(`Wallet credited with ${formatCurrency(data.amount)}`);
+      
+      // Update the selected user's wallet balance
+      if (selectedUser) {
+        setSelectedUser({
+          ...selectedUser,
+          wallet_balance: response.newBalance
+        });
+      }
+      
+      // Refresh the users list to update the wallet balance
+      await fetchUsers(currentPage);
+      
+      setShowCreditModal(false);
+      resetCreditForm();
+    } catch (error: any) {
+      console.error('Error crediting wallet:', error);
+      toast.error('Failed to credit wallet');
+    } finally {
+      setIsCreditingWallet(false);
     }
   };
 
@@ -277,6 +361,223 @@ export function AdminUsersPage() {
               </button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Reset Password Modal */}
+      {showPasswordModal && selectedUser && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div 
+              className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" 
+              onClick={() => setShowPasswordModal(false)}
+            />
+            
+            <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">Reset User Password</h3>
+                <button
+                  onClick={() => setShowPasswordModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <form onSubmit={handlePasswordSubmit(resetPassword)} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    User
+                  </label>
+                  <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                      <User className="w-4 h-4 text-gray-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{selectedUser.first_name} {selectedUser.last_name}</p>
+                      <p className="text-sm text-gray-600">{selectedUser.email}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    New Password
+                  </label>
+                  <input
+                    {...registerPassword('newPassword', {
+                      required: 'New password is required',
+                      minLength: { value: 8, message: 'Password must be at least 8 characters' }
+                    })}
+                    type="password"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="Enter new password"
+                  />
+                  {passwordErrors.newPassword && (
+                    <p className="mt-1 text-sm text-red-600">{passwordErrors.newPassword.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Confirm New Password
+                  </label>
+                  <input
+                    {...registerPassword('confirmPassword', {
+                      required: 'Please confirm the new password',
+                      validate: (value, formValues) => 
+                        value === formValues.newPassword || 'Passwords do not match'
+                    })}
+                    type="password"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="Confirm new password"
+                  />
+                  {passwordErrors.confirmPassword && (
+                    <p className="mt-1 text-sm text-red-600">{passwordErrors.confirmPassword.message}</p>
+                  )}
+                </div>
+
+                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                  <div className="flex items-start">
+                    <AlertCircle className="w-5 h-5 text-yellow-600 mr-2 mt-0.5" />
+                    <div className="text-sm text-yellow-800">
+                      <p className="font-medium mb-1">Important</p>
+                      <p>This action will reset the user's password. They will need to use this new password for their next login.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordModal(false)}
+                    className="flex-1 px-4 py-3 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isResettingPassword}
+                    className="flex-1 bg-red-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isResettingPassword ? (
+                      <div className="flex items-center justify-center">
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        Resetting...
+                      </div>
+                    ) : (
+                      'Reset Password'
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Credit Wallet Modal */}
+      {showCreditModal && selectedUser && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div 
+              className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" 
+              onClick={() => setShowCreditModal(false)}
+            />
+            
+            <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">Credit User Wallet</h3>
+                <button
+                  onClick={() => setShowCreditModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <form onSubmit={handleCreditSubmit(creditWallet)} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    User
+                  </label>
+                  <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                      <User className="w-4 h-4 text-gray-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{selectedUser.first_name} {selectedUser.last_name}</p>
+                      <p className="text-sm text-gray-600">{selectedUser.email}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Current Balance
+                  </label>
+                  <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                    <DollarSign className="w-5 h-5 text-gray-600 mr-2" />
+                    <span className="font-medium text-gray-900">{formatCurrency(selectedUser.wallet_balance)}</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Amount to Credit (NGN)
+                  </label>
+                  <input
+                    {...registerCredit('amount', {
+                      required: 'Amount is required',
+                      min: { value: 1, message: 'Amount must be at least 1' },
+                      max: { value: 1000000, message: 'Amount cannot exceed 1,000,000' }
+                    })}
+                    type="number"
+                    step="0.01"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="Enter amount"
+                  />
+                  {creditErrors.amount && (
+                    <p className="mt-1 text-sm text-red-600">{creditErrors.amount.message}</p>
+                  )}
+                </div>
+
+                <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                  <div className="flex items-start">
+                    <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5" />
+                    <div className="text-sm text-green-800">
+                      <p className="font-medium mb-1">Admin Credit</p>
+                      <p>This action will immediately add funds to the user's wallet. This transaction will be recorded in the system.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowCreditModal(false)}
+                    className="flex-1 px-4 py-3 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isCreditingWallet}
+                    className="flex-1 bg-green-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isCreditingWallet ? (
+                      <div className="flex items-center justify-center">
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        Processing...
+                      </div>
+                    ) : (
+                      'Credit Wallet'
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       )}
 
@@ -631,9 +932,59 @@ export function AdminUsersPage() {
                 )}
               </div>
             </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+              <div className="grid grid-cols-2 gap-3 pt-6 border-t border-gray-200">
+                {selectedUser.role !== 'admin' && (
+                  <>
+                    {selectedUser.status === 'active' ? (
+                      <button
+                        onClick={() => updateUserStatus(selectedUser.id, 'suspended')}
+                        disabled={isUpdating}
+                        className="flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200 disabled:opacity-50"
+                      >
+                        {isUpdating ? (
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        ) : (
+                          <UserX className="w-4 h-4 mr-2" />
+                        )}
+                        Suspend User
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => updateUserStatus(selectedUser.id, 'active')}
+                        disabled={isUpdating}
+                        className="flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 disabled:opacity-50"
+                      >
+                        {isUpdating ? (
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        ) : (
+                          <UserCheck className="w-4 h-4 mr-2" />
+                        )}
+                        Activate User
+                      </button>
+                    )}
+                  </>
+                )}
+                
+                <button
+                  onClick={() => setShowPasswordModal(true)}
+                  className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                >
+                  <Key className="w-4 h-4 mr-2" />
+                  Reset Password
+                </button>
+                
+                <button
+                  onClick={() => setShowCreditModal(true)}
+                  className="flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
+                >
+                  <CreditCard className="w-4 h-4 mr-2" />
+                  Credit Wallet
+                </button>
+                
+                <button
+                  onClick={() => setSelectedUser(null)}
+                  className="col-span-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+                >
+                  Close
+                </button>
+              </div>
