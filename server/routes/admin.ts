@@ -180,9 +180,9 @@ router.post('/users/:id/credit-wallet', async (req: AuthRequest, res, next) => {
       return res.status(404).json({ error: 'Wallet not found' });
     }
 
-    const currentBalance = parseFloat(wallet.balance.toString());
+    const currentBalance = Number(parseFloat(wallet.balance.toString()));
     // Ensure both values are treated as numbers
-    const newBalance = Number(currentBalance) + Number(amount);
+    const newBalance = currentBalance + Number(amount);
 
     // Update wallet balance
     await updateWallet(userId, newBalance);
