@@ -1,0 +1,20 @@
+# Netlify configuration file
+
+[build]
+  # Directory to publish (the output of the build)
+  publish = "dist"
+  # Build command
+  command = "npm run build"
+
+# Redirects and rewrites
+[[redirects]]
+  # Redirect all paths to index.html for client-side routing
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Environment variables can also be set here, but sensitive values
+# should be set in the Netlify UI
+[build.environment]
+  # Example of a non-sensitive environment variable
+  NODE_VERSION = "18"
