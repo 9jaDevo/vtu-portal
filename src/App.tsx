@@ -5,9 +5,19 @@ import { AuthProvider } from './contexts/AuthContext';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
+import { AboutPage } from './pages/AboutPage';
+import { ContactPage } from './pages/ContactPage';
 import { VerifyEmailPage } from './pages/auth/VerifyEmailPage';
 import { DashboardPage } from './pages/dashboard/DashboardPage';
 import { TransactionsPage } from './pages/dashboard/TransactionsPage';
+import { APIDocsLandingPage } from './pages/APIDocsLandingPage';
+import { AirtimeDocsPage } from './components/api-docs/AirtimeDocsPage';
+import { DataDocsPage } from './components/api-docs/DataDocsPage';
+import { TvDocsPage } from './components/api-docs/TvDocsPage';
+import { ElectricityDocsPage } from './components/api-docs/ElectricityDocsPage';
+import { EducationDocsPage } from './components/api-docs/EducationDocsPage';
+import { InsuranceDocsPage } from './components/api-docs/InsuranceDocsPage';
+import { APIDocsPage } from './pages/APIDocsPage';
 import { MakeTransactionPage } from './pages/dashboard/MakeTransactionPage';
 import { WalletPage } from './pages/dashboard/WalletPage';
 import { APIPage } from './pages/dashboard/APIPage';
@@ -24,7 +34,17 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
             <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/api-docs" element={<APIDocsLandingPage />} />
+            <Route path="/api-docs/airtime" element={<AirtimeDocsPage />} />
+            <Route path="/api-docs/data" element={<DataDocsPage />} />
+            <Route path="/api-docs/tv" element={<TvDocsPage />} />
+            <Route path="/api-docs/electricity" element={<ElectricityDocsPage />} />
+            <Route path="/api-docs/education" element={<EducationDocsPage />} />
+            <Route path="/api-docs/insurance" element={<InsuranceDocsPage />} />
+
             
             {/* Protected Dashboard Routes */}
             <Route path="/dashboard" element={

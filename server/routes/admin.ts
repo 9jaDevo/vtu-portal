@@ -7,6 +7,9 @@ import {
   getAllUsers,
   getAllTransactions,
   updateUser,
+  findWallet,
+  updateWallet,
+  createWalletTransaction,
   getAllServiceProviders,
   getServiceProvidersWithPlanCount,
   updateServiceProvider,
@@ -15,6 +18,7 @@ import { authenticateToken, requireAdmin, AuthRequest } from '../middleware/auth
 import { vtpassService } from '../services/vtpass.js';
 import { logger } from '../utils/logger.js';
 import { v4 as uuidv4 } from 'uuid';
+import bcrypt from 'bcryptjs';
 
 const router = express.Router();
 
@@ -127,6 +131,91 @@ router.patch('/users/:id/status', async (req: AuthRequest, res, next) => {
     });
 
     res.json({ message: 'User status updated successfully' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Reset user password
+router.patch('/users/:id/reset-password', async (req: AuthRequest, res, next) => {
+  try {
+    const userId = req.params.id;
+    const { newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters long' });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+    // Update user's password
+    await updateUser(userId, { password: hashedPassword });
+
+    logger.info('User password reset by admin', { 
+      adminId: req.user!.id, 
+      userId
+    });
+
+    res.json({ message: 'User password reset successfully' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Credit user wallet
+router.post('/users/:id/credit-wallet', async (req: AuthRequest, res, next) => {
+  try {
+    const userId = req.params.id;
+    const amount = parseFloat(req.body.amount);
+
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ error: 'Amount must be a positive number' });
+    }
+
+    // Get user wallet
+    const wallet = await findWallet(userId);
+
+    if (!wallet) {
+      return res.status(404).json({ error: 'Wallet not found' });
+    }
+
+    const currentBalance = Number(parseFloat(wallet.balance.toString()));
+    // Ensure both values are treated as numbers
+    const newBalance = currentBalance + Number(amount);
+
+    // Update wallet balance
+    await updateWallet(userId, newBalance);
+
+    // Log wallet transaction
+    const walletTransactionId = uuidv4();
+    const reference = `ADMIN_CREDIT_${Date.now()}`;
+    const walletTransactionData = {
+      id: walletTransactionId,
+      wallet_id: wallet.id,
+      user_id: userId,
+      type: 'credit',
+      amount,
+      balance_before: currentBalance,
+      balance_after: newBalance,
+      reference,
+      description: `Wallet credited by admin (${req.user!.id})`
+    };
+
+    await createWalletTransaction(walletTransactionData);
+
+    logger.info('User wallet credited by admin', { 
+      adminId: req.user!.id, 
+      userId,
+      amount,
+      newBalance
+    });
+
+    res.json({ 
+      message: 'User wallet credited successfully',
+      amount,
+      newBalance
+    });
   } catch (error) {
     next(error);
   }

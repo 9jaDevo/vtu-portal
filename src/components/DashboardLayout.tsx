@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Breadcrumbs } from './Breadcrumbs';
 import { 
   CreditCard,
   LayoutDashboard,
@@ -13,7 +14,8 @@ import {
   Code,
   Bell,
   User,
-  Plus
+  Plus,
+  Shield
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -33,6 +35,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: 'Transactions', href: '/dashboard/transactions', icon: History },
     { name: 'Wallet', href: '/dashboard/wallet', icon: Wallet },
     { name: 'API Keys', href: '/dashboard/api', icon: Code },
+    // Admin link - only shown to admin users
+    ...(user?.role === 'admin' ? [{ name: 'Admin Panel', href: '/admin', icon: Shield }] : []),
   ];
 
   const handleLogout = () => {
@@ -41,7 +45,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
@@ -132,7 +136,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       </div>
 
       {/* Main Content */}
-      <div className="lg:pl-72">
+      <div className="lg:flex-1 w-full">
         {/* Top Bar */}
         <div className="bg-white border-b border-gray-200 px-4 py-4 lg:px-8">
           <div className="flex items-center justify-between">
@@ -154,6 +158,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
         {/* Page Content */}
         <main className="p-4 lg:p-8">
+          {/* Add Breadcrumbs here */}
+          <div className="mb-6">
+            <Breadcrumbs />
+          </div>
           {children}
         </main>
       </div>
