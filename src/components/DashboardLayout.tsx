@@ -14,7 +14,8 @@ import {
   Code,
   Bell,
   User,
-  Plus
+  Plus,
+  Shield
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
