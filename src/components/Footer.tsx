@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { CreditCard, Globe } from 'lucide-react';
 import { businessInfo } from '../config/businessInfo';
 
+// CSS class to ensure links are clickable
+const clickableLink = "hover:text-blue-300 pointer-events-auto";
+
 export function Footer() {
   return (
     <footer className="bg-gray-900 py-12">
@@ -25,38 +28,38 @@ export function Footer() {
             {/* NAP details */}
             <div className="mt-4 text-gray-400 text-sm">
               <p><strong>Address:</strong> {businessInfo.address.streetAddress}, {businessInfo.address.addressLocality}, {businessInfo.address.addressRegion}, {businessInfo.address.postalCode}</p>
-              <p><strong>Phone:</strong> <a href={`tel:${businessInfo.telephone}`} className="hover:text-blue-300">{businessInfo.telephone}</a></p>
-              <p><strong>Email:</strong> <a href={`mailto:${businessInfo.email}`} className="hover:text-blue-300">{businessInfo.email}</a></p>
+              <p><strong>Phone:</strong> <a href={`tel:${businessInfo.telephone}`} className={`${clickableLink}`}>{businessInfo.telephone}</a></p>
+              <p><strong>Email:</strong> <a href={`mailto:${businessInfo.email}`} className={`${clickableLink}`}>{businessInfo.email}</a></p>
             </div>
           </div>
           
           <div>
             <h3 className="text-white font-semibold mb-4">Services</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li><Link to="/dashboard/make-transaction" className="hover:text-blue-300">Airtime Top-up</Link></li>
-              <li><Link to="/dashboard/make-transaction" className="hover:text-blue-300">Data Bundles</Link></li>
-              <li><Link to="/dashboard/make-transaction" className="hover:text-blue-300">TV Subscriptions</Link></li>
-              <li><Link to="/dashboard/make-transaction" className="hover:text-blue-300">Electricity Bills</Link></li>
+            <ul className="space-y-2 text-gray-400 pointer-events-auto">
+              <li className="pointer-events-auto"><Link to="/dashboard/make-transaction" className={`${clickableLink}`}>Airtime Top-up</Link></li>
+              <li className="pointer-events-auto"><Link to="/dashboard/make-transaction" className={`${clickableLink}`}>Data Bundles</Link></li>
+              <li className="pointer-events-auto"><Link to="/dashboard/make-transaction" className={`${clickableLink}`}>TV Subscriptions</Link></li>
+              <li className="pointer-events-auto"><Link to="/dashboard/make-transaction" className={`${clickableLink}`}>Electricity Bills</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="text-white font-semibold mb-4">Company</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li><Link to="/about" className="hover:text-blue-300">About Us</Link></li>
-              <li><Link to="/contact" className="hover:text-blue-300">Contact</Link></li>
-              <li><Link to="/privacy" className="hover:text-blue-300">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="hover:text-blue-300">Terms of Service</Link></li>
+            <ul className="space-y-2 text-gray-400 pointer-events-auto">
+              <li className="pointer-events-auto"><Link to="/about" className={`${clickableLink}`}>About Us</Link></li>
+              <li className="pointer-events-auto"><Link to="/contact" className={`${clickableLink}`}>Contact</Link></li>
+              <li className="pointer-events-auto"><Link to="/privacy" className={`${clickableLink}`}>Privacy Policy</Link></li>
+              <li className="pointer-events-auto"><Link to="/terms" className={`${clickableLink}`}>Terms of Service</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="text-white font-semibold mb-4">Support</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li><Link to="/help" className="hover:text-blue-300">Help Center</Link></li>
-              <li><Link to="/api-docs" className="hover:text-blue-300">API Documentation</Link></li>
-              <li><Link to="/status" className="hover:text-blue-300">Status Page</Link></li>
-              <li><a href={`mailto:${businessInfo.email}`} className="hover:text-blue-300">Contact Support</a></li>
+            <ul className="space-y-2 text-gray-400 pointer-events-auto">
+              <li className="pointer-events-auto"><Link to="/help" className={`${clickableLink}`}>Help Center</Link></li>
+              <li className="pointer-events-auto"><Link to="/api-docs" className={`${clickableLink}`}>API Documentation</Link></li>
+              <li className="pointer-events-auto"><Link to="/status" className={`${clickableLink}`}>Status Page</Link></li>
+              <li className="pointer-events-auto"><a href={`mailto:${businessInfo.email}`} className={`${clickableLink}`}>Contact Support</a></li>
             </ul>
           </div>
         </div>
